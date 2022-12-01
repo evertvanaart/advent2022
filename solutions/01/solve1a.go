@@ -1,8 +1,6 @@
-package day1
+package day01
 
-import (
-	"advent2022/solutions/common"
-)
+import "advent2022/solutions/common"
 
 // Basic solution: Iterate through the input lines, convert each non-empty line to an integer,
 // keep track of the sum for the current block of lines; when encountering the end of a block

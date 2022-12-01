@@ -1,4 +1,4 @@
-package day1
+package day01
 
 import "advent2022/solutions/common"
 
@@ -12,7 +12,7 @@ import "advent2022/solutions/common"
 
 // Stores the X highest values encountered so far; in this case, X is always equal to three.
 // Keeping track of the index of the lowest of these three values makes the update() function
-// slightly more efficient (i.e., it saves us from having to call FindMinIndex every time).
+// slightly more efficient (i.e., it saves us from having to call FindMinIndex() every time).
 type topValues struct {
 	values   []int
 	minIndex int

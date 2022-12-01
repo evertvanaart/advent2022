@@ -4,7 +4,6 @@ import (
 	day01 "advent2022/solutions/01"
 	"advent2022/solutions/common"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -22,16 +21,7 @@ func getSolver(task string) solver {
 }
 
 func main() {
-	args := os.Args[1:]
-
-	if len(args) != 2 {
-		common.PrintUsage()
-		os.Exit(1)
-	}
-
-	task := args[0]
-	input := args[1]
-
+	task, input := common.ParseArgs()
 	day := common.ParseTask(task)
 	lines := common.ReadLines(day, input)
 	solver := getSolver(task)

@@ -31,11 +31,23 @@ func ReadLines(day string, name string) []string {
 	return lines
 }
 
+// Parses the input arguments
+func ParseArgs() (string, string) {
+	args := os.Args[1:]
+
+	if len(args) != 2 {
+		printUsage()
+		os.Exit(1)
+	}
+
+	return args[0], args[1]
+}
+
 // Extract the day from the task string
 func ParseTask(task string) string {
 	if len(task) != 3 {
 		fmt.Printf("Task '%s' does not match expected length\n", task)
-		PrintUsage()
+		printUsage()
 		os.Exit(1)
 	}
 
@@ -43,7 +55,7 @@ func ParseTask(task string) string {
 }
 
 // Prints usage
-func PrintUsage() {
+func printUsage() {
 	fmt.Println("Usage: go run . <task> <input>")
 	fmt.Println(" <task>   Day number (two digits) plus part ('a' or 'b')")
 	fmt.Println(" <input>  Input file base name, e.g. 'input' or 'sample'")

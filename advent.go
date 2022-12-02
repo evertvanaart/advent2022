@@ -2,6 +2,7 @@ package main
 
 import (
 	day01 "advent2022/solutions/01"
+	day02 "advent2022/solutions/02"
 	"advent2022/solutions/common"
 	"fmt"
 	"time"
@@ -10,14 +11,20 @@ import (
 type solver func([]string) int
 
 func getSolver(task string) solver {
-	switch task {
-	case "01a":
-		return day01.SolveA
-	case "01b":
-		return day01.SolveB
-	default:
+	solvers := map[string]solver{
+		"01a": day01.SolveA,
+		"01b": day01.SolveB,
+		"02a": day02.SolveA,
+		"02b": day02.SolveB,
+	}
+
+	solver, exists := solvers[task]
+
+	if !exists {
 		panic(fmt.Sprintf("Unsupported task '%s'", task))
 	}
+
+	return solver
 }
 
 func main() {

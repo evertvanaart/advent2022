@@ -24,6 +24,7 @@ func getSolver(task string) solver {
 		"04a": day04.SolveA,
 		"04b": day04.SolveB,
 		"05a": day05.SolveA,
+		"05b": day05.SolveB,
 	}
 
 	solver, exists := solvers[task]

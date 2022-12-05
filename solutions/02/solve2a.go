@@ -1,6 +1,9 @@
 package day02
 
-import "fmt"
+import (
+	"advent2022/solutions/common"
+	"fmt"
+)
 
 // Since there's only nine possible combinations per round, we might as well hardcode all
 // possible scores. Based on some very superficial performance testing, this is actually
@@ -33,12 +36,12 @@ func scoreRoundA(line string) int {
 	panic(fmt.Sprintf("Unexpected line '%s'", line))
 }
 
-func SolveA(lines []string) int {
+func SolveA(lines []string) common.Solution {
 	totalScore := 0
 
 	for _, line := range lines {
 		totalScore += scoreRoundA(line)
 	}
 
-	return totalScore
+	return common.ToIntSolution(totalScore)
 }

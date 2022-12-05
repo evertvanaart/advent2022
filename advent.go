@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type solver func([]string) int
+type solver func([]string) common.Solution
 
 func getSolver(task string) solver {
 	solvers := map[string]solver{
@@ -49,5 +49,5 @@ func main() {
 	duration := time.Since(startTime)
 
 	fmt.Printf("Elapsed time: %v\n", duration)
-	fmt.Printf("Solution: %v\n", solution)
+	fmt.Printf("Solution: %s\n", solution.String())
 }

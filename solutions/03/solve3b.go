@@ -1,6 +1,9 @@
 package day03
 
-import "fmt"
+import (
+	"advent2022/solutions/common"
+	"fmt"
+)
 
 // Exact same idea, but now with three strings instead of two. Create a character set for the
 // first two strings, then check which of the characters in the third string is in both sets.
@@ -18,12 +21,12 @@ func solveGroup(lines []string) int {
 	panic(fmt.Sprintf("Failed to find common value: %v", lines))
 }
 
-func SolveB(lines []string) int {
+func SolveB(lines []string) common.Solution {
 	sum := 0
 
 	for i := 0; i < len(lines); i += 3 {
 		sum += solveGroup(lines[i : i+3])
 	}
 
-	return sum
+	return common.ToIntSolution(sum)
 }

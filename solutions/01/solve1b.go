@@ -36,7 +36,7 @@ func (topValues *topValues) update(sum int) {
 	topValues.minIndex = common.FindMinIndex(topValues.values)
 }
 
-func SolveB(lines []string) int {
+func SolveB(lines []string) common.Solution {
 	topValues := createTopValues(3)
 	currentSum := 0
 
@@ -52,5 +52,5 @@ func SolveB(lines []string) int {
 	}
 
 	topValues.update(currentSum)
-	return common.ComputeSum(topValues.values)
+	return common.ToIntSolution(common.ComputeSum(topValues.values))
 }

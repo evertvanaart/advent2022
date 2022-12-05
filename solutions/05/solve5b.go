@@ -2,7 +2,6 @@ package day05
 
 import (
 	"advent2022/solutions/common"
-	"fmt"
 	"strings"
 )
 
@@ -37,7 +36,7 @@ func applyB(stacks []*stack, instruction string) {
 	stacks[target].pushN(values)
 }
 
-func SolveB(lines []string) int {
+func SolveB(lines []string) common.Solution {
 	separatorIndex := findSeparatorLine(lines)
 	instructions := lines[separatorIndex+1:]
 	stackLines := lines[:separatorIndex]
@@ -48,7 +47,5 @@ func SolveB(lines []string) int {
 	}
 
 	tops := strings.Join(getTops(stacks), "")
-	fmt.Printf("Top containers: %s\n", tops)
-
-	return 0
+	return common.ToStringSolution(tops)
 }

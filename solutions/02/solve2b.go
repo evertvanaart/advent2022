@@ -1,6 +1,9 @@
 package day02
 
-import "fmt"
+import (
+	"advent2022/solutions/common"
+	"fmt"
+)
 
 // Still hardcoding the scores, just different values than in the A part.
 
@@ -29,12 +32,12 @@ func scoreRoundB(line string) int {
 	panic(fmt.Sprintf("Unexpected line '%s'", line))
 }
 
-func SolveB(lines []string) int {
+func SolveB(lines []string) common.Solution {
 	totalScore := 0
 
 	for _, line := range lines {
 		totalScore += scoreRoundB(line)
 	}
 
-	return totalScore
+	return common.ToIntSolution(totalScore)
 }

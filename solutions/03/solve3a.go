@@ -1,6 +1,9 @@
 package day03
 
-import "fmt"
+import (
+	"advent2022/solutions/common"
+	"fmt"
+)
 
 // Straightforward approach: Create a "set" from the characters in one of the two compartments,
 // then for each character in the other compartment, check if it exists in the set of the first
@@ -24,12 +27,12 @@ func solveLine(line string) int {
 	panic(fmt.Sprintf("Failed to find common value: %s, %s", compartment1, compartment2))
 }
 
-func SolveA(lines []string) int {
+func SolveA(lines []string) common.Solution {
 	sum := 0
 
 	for _, line := range lines {
 		sum += solveLine(line)
 	}
 
-	return sum
+	return common.ToIntSolution(sum)
 }

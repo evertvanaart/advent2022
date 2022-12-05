@@ -1,6 +1,9 @@
 package day04
 
-import "strings"
+import (
+	"advent2022/solutions/common"
+	"strings"
+)
 
 // Very similar; the only thing worth noting is that checking for overlap between two ranges
 // is much easier if we start from the negative case, i.e. check if the ranges do _not_ overlap.
@@ -13,7 +16,7 @@ func overlaps(line string) bool {
 	return !(sections1.end < sections2.start || sections2.end < sections1.start)
 }
 
-func SolveB(lines []string) int {
+func SolveB(lines []string) common.Solution {
 	count := 0
 
 	for _, line := range lines {
@@ -22,5 +25,5 @@ func SolveB(lines []string) int {
 		}
 	}
 
-	return count
+	return common.ToIntSolution(count)
 }

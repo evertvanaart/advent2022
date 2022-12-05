@@ -7,7 +7,7 @@ import "advent2022/solutions/common"
 // (either because of an empty line, or because we've reached the end), compare the current
 // sum value to the maximum; finally return the highest block sum.
 
-func SolveA(lines []string) int {
+func SolveA(lines []string) common.Solution {
 	currentSum := 0
 	maxSum := 0
 
@@ -22,5 +22,5 @@ func SolveA(lines []string) int {
 		currentSum += lineVal
 	}
 
-	return common.Max(maxSum, currentSum)
+	return common.ToIntSolution(common.Max(maxSum, currentSum))
 }

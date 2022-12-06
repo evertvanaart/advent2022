@@ -6,6 +6,7 @@ import (
 	day03 "advent2022/solutions/03"
 	day04 "advent2022/solutions/04"
 	day05 "advent2022/solutions/05"
+	day06 "advent2022/solutions/06"
 	"advent2022/solutions/common"
 	"fmt"
 	"time"
@@ -25,6 +26,8 @@ func getSolver(task string) solver {
 		"04b": day04.SolveB,
 		"05a": day05.SolveA,
 		"05b": day05.SolveB,
+		"06a": day06.SolveA,
+		"06b": day06.SolveB,
 	}
 
 	solver, exists := solvers[task]

@@ -6,14 +6,15 @@ import "advent2022/solutions/common"
 // their absolute paths as keys. Each directory object contains the path of its parent directory
 // (although we could of course also determine this dynamically from the path), the combined size
 // of all objects in this directory and its subdirectories, and a counter tracking how many times
-// we've called "ls" on this directory (to avoid counting files more than once).
+// we've called "ls" on this directory (to avoid counting files more than once, although I don't
+// believe the input actually does this at any point).
 //
 // While looping through the input, we keep track of the path of the current directory, which is
 // updated via the "cd" commands. Whenever we encounter a file, we add its size to the total size
-// of the current directory _and_ all of its subdirectories (provided that this is the first time
-// "ls" was called for the current directory). Note that "dir <name>" lines are ignored; we will
-// create those directories only when we step into them, and the input doesn't appear to try to
-// step into any non-existant directories.
+// of the current directory _and_ all of its parent directories (provided that this is the first
+// time "ls" was called for the current directory). Note that "dir <name>" lines are ignored; we
+// will create those directories only when we step into them, and the input doesn't appear to
+// try to step into any non-existant directories.
 //
 // After processing all input lines, we'll have a flat map of all directories with their total
 // size (including subdirectories), so all we need to do then is to sum up the sizes of the

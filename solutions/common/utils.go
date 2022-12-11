@@ -71,3 +71,13 @@ func ToInt(str string) int {
 
 	return value
 }
+
+func ToIntN(strings []string) []int {
+	values := make([]int, len(strings))
+
+	for index, str := range strings {
+		values[index] = ToInt(str)
+	}
+
+	return values
+}

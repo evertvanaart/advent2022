@@ -78,6 +78,7 @@ func getSolver(task string) solver {
 		"21b": day21.SolveB,
 		// "22a": day22.SolveA,
 		"23a": day23.SolveA,
+		"23b": day23.SolveB,
 	}
 
 	solver, exists := solvers[task]

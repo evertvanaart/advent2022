@@ -22,8 +22,7 @@ import (
 	day19 "advent2022/solutions/19"
 	day20 "advent2022/solutions/20"
 	day21 "advent2022/solutions/21"
-
-	// day22 "advent2022/solutions/22"
+	day22 "advent2022/solutions/22"
 	day23 "advent2022/solutions/23"
 	day24 "advent2022/solutions/24"
 	day25 "advent2022/solutions/25"
@@ -78,7 +77,8 @@ func getSolver(task string) solver {
 		"20b": day20.SolveB,
 		"21a": day21.SolveA,
 		"21b": day21.SolveB,
-		// "22a": day22.SolveA,
+		"22a": day22.SolveA,
+		"22b": day22.SolveB,
 		"23a": day23.SolveA,
 		"23b": day23.SolveB,
 		"24a": day24.SolveA,

@@ -2,55 +2,20 @@ package day22
 
 import (
 	"advent2022/solutions/common"
-	"fmt"
-	"strings"
-	"unicode"
 )
 
-func noSpace(r rune) bool {
-	return !unicode.IsSpace(r)
-}
+// This A part is far from elegant, but it works well enough. The basic idea is that while
+// parsing the grid, we keep track of the bounds, i.e. for each row we track the range of
+// columns with non-empty cells (containing '.' or '#'), and for each column we similarly
+// track the range of non-empty rows. Then, whenever a step would cause us to leave these
+// bounds, we instead move to the opposite bound of the current row or column. The lack of
+// elegance stems from the way the position is updated, which involves far too many switch
+// statements; properly splitting the position struct into a position vector and a movement
+// vector would allow us to greatly simplify this logic.
 
-const (
-	right = 0
-	down  = 1
-	left  = 2
-	up    = 3
-)
+/* --------------------------------- Vector --------------------------------- */
 
-type position struct {
-	row int
-	col int
-	dir int
-}
-
-func (pos *position) turnLeft() {
-	switch pos.dir {
-	case right:
-		pos.dir = up
-	case down:
-		pos.dir = right
-	case left:
-		pos.dir = down
-	case up:
-		pos.dir = left
-	}
-}
-
-func (pos *position) turnRight() {
-	switch pos.dir {
-	case right:
-		pos.dir = down
-	case down:
-		pos.dir = left
-	case left:
-		pos.dir = up
-	case up:
-		pos.dir = right
-	}
-}
-
-func (pos *position) move(g *grid, rowDiff int, colDiff int, steps int) {
+func (pos *vector2d) moveA(g *grid, rowDiff int, colDiff int, steps int) {
 	for step := 0; step < steps; step++ {
 		nextRow := pos.row + rowDiff
 		nextCol := pos.col + colDiff
@@ -74,34 +39,6 @@ func (pos *position) move(g *grid, rowDiff int, colDiff int, steps int) {
 
 /* ---------------------------------- Grid ---------------------------------- */
 
-type grid struct {
-	walls     []bool
-	rows      int
-	cols      int
-	rowBounds [][2]int
-	colBounds [][2]int
-}
-
-func (g *grid) print() {
-	for row := 0; row < g.rows; row++ {
-		for col := 0; col < g.rowBounds[row][0]; col++ {
-			fmt.Print(" ")
-		}
-
-		for col := g.rowBounds[row][0]; col < g.rowBounds[row][1]; col++ {
-			index := row*g.cols + col
-
-			if g.walls[index] {
-				fmt.Print("#")
-			} else {
-				fmt.Print(".")
-			}
-		}
-
-		fmt.Print("\n")
-	}
-}
-
 func (g *grid) wrapHorizontal(row int, col int) (int, int) {
 	if col < g.rowBounds[row][0] {
 		return row, g.rowBounds[row][1] - 1
@@ -122,88 +59,18 @@ func (g *grid) wrapVertical(row int, col int) (int, int) {
 	return row, col
 }
 
-func createBounds(length int, max int) [][2]int {
-	bounds := make([][2]int, length)
+/* ------------------------------- Core logic ------------------------------- */
 
-	for index := range bounds {
-		bounds[index] = [2]int{-1, max}
-	}
-
-	return bounds
-}
-
-func (g *grid) parseRow(row int, line string) {
-	firstIndex := strings.IndexFunc(line, noSpace)
-	lastIndex := strings.LastIndexFunc(line, noSpace)
-	g.rowBounds[row] = [2]int{firstIndex, lastIndex + 1}
-
-	for col := firstIndex; col <= lastIndex; col++ {
-		char := line[col]
-
-		if char == '#' {
-			index := row*g.cols + col
-			g.walls[index] = true
-		}
-	}
-}
-
-func parseGrid(lines []string) *grid {
-	rows := len(lines)
-	cols := 0
-
-	for _, line := range lines {
-		if len(line) > cols {
-			cols = len(line)
-		}
-	}
-
-	size := rows * cols
-	walls := make([]bool, size)
-	rowBounds := createBounds(rows, cols)
-	colBounds := createBounds(cols, rows)
-
-	grid := &grid{walls, rows, cols, rowBounds, colBounds}
-
-	for row, line := range lines {
-		grid.parseRow(row, line)
-	}
-
-	for col := 0; col < cols; col++ {
-		for row := 0; row < rows; row++ {
-			if col >= grid.rowBounds[row][0] && col < grid.rowBounds[row][1] {
-				grid.colBounds[col][0] = row
-				break
-			}
-		}
-
-		for row := rows - 1; row >= 0; row-- {
-			if col >= grid.rowBounds[row][0] && col < grid.rowBounds[row][1] {
-				grid.colBounds[col][1] = row + 1
-				break
-			}
-		}
-	}
-
-	return grid
-}
-
-/* ------------------------------ Instructions ------------------------------ */
-
-type instruction struct {
-	steps int
-	turn  byte
-}
-
-func (i *instruction) apply(pos *position, g *grid) {
+func (i *instruction) applyA(pos *vector2d, g *grid) {
 	switch pos.dir {
 	case right:
-		pos.move(g, 0, 1, i.steps)
+		pos.moveA(g, 0, 1, i.steps)
 	case down:
-		pos.move(g, 1, 0, i.steps)
+		pos.moveA(g, 1, 0, i.steps)
 	case left:
-		pos.move(g, 0, -1, i.steps)
+		pos.moveA(g, 0, -1, i.steps)
 	case up:
-		pos.move(g, -1, 0, i.steps)
+		pos.moveA(g, -1, 0, i.steps)
 	}
 
 	if i.turn == 'L' {
@@ -213,33 +80,14 @@ func (i *instruction) apply(pos *position, g *grid) {
 	}
 }
 
-func parseInstructions(line string) []instruction {
-	instructions := []instruction{}
-	groupStart := 0
-
-	for index := 0; index < len(line); index++ {
-		char := line[index]
-
-		if char == 'L' || char == 'R' {
-			steps := common.ToInt(line[groupStart:index])
-			instructions = append(instructions, instruction{steps, char})
-			groupStart = index + 1
-		}
-	}
-
-	steps := common.ToInt(line[groupStart:])
-	instructions = append(instructions, instruction{steps, 'X'})
-	return instructions
-}
-
 func SolveA(lines []string) common.Solution {
 	instructions := parseInstructions(lines[len(lines)-1])
 	grid := parseGrid(lines[:len(lines)-2])
 
-	position := &position{0, grid.rowBounds[0][0], right}
+	position := &vector2d{0, grid.rowBounds[0][0], right}
 
 	for _, instruction := range instructions {
-		instruction.apply(position, grid)
+		instruction.applyA(position, grid)
 	}
 
 	result := 1000*(position.row+1) + 4*(position.col+1) + position.dir

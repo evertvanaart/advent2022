@@ -95,18 +95,34 @@ func getSolver(task string) solver {
 	return solver
 }
 
+const profileRuns = 20
+
 func main() {
-	task, input := common.ParseArgs()
+	task, input, flag := common.ParseArgs()
+
 	day := common.ParseTask(task)
 	lines := common.ReadLines(day, input)
 	solver := getSolver(task)
 
-	fmt.Printf("Running task '%s' on input '%s'\n", task, input)
+	if flag == "--profile" {
+		fmt.Printf("Profiling task '%s' using input '%s'\n", task, input)
+		startTime := time.Now()
 
-	startTime := time.Now()
-	solution := solver(lines)
-	duration := time.Since(startTime)
+		for i := 0; i < profileRuns; i++ {
+			solver(lines)
+		}
 
-	fmt.Printf("Elapsed time: %v\n", duration)
-	fmt.Printf("Solution: %s\n", solution.String())
+		duration := time.Since(startTime)
+		average := duration.Microseconds() / profileRuns
+		fmt.Printf("Average: %d microseconds\n", average)
+	} else {
+		fmt.Printf("Running task '%s' on input '%s'\n", task, input)
+
+		startTime := time.Now()
+		solution := solver(lines)
+		duration := time.Since(startTime)
+
+		fmt.Printf("Elapsed time: %v\n", duration)
+		fmt.Printf("Solution: %s\n", solution.String())
+	}
 }

@@ -10,9 +10,37 @@ import "advent2022/solutions/common"
 // which of the top-three values is lowest. This gives us a runtime complexity of O(N) (where N is
 // the number of elves), as opposed to O(NlogN) if we used sorting.
 
+func computeSum(values []int) int {
+	sum := 0
+
+	for _, value := range values {
+		sum += value
+	}
+
+	return sum
+}
+
+func findMinIndex(values []int) int {
+	if len(values) == 0 {
+		return -1
+	}
+
+	minValue := values[0]
+	minIndex := 0
+
+	for index, value := range values {
+		if value < minValue {
+			minIndex = index
+			minValue = value
+		}
+	}
+
+	return minIndex
+}
+
 // Stores the X highest values encountered so far; in this case, X is always equal to three.
 // Keeping track of the index of the lowest of these three values makes the update() function
-// slightly more efficient (i.e., it saves us from having to call FindMinIndex() every time).
+// slightly more efficient (i.e., it saves us from having to call findMinIndex() every time).
 type topValues struct {
 	values   []int
 	minIndex int
@@ -33,7 +61,7 @@ func (topValues *topValues) update(sum int) {
 		topValues.values[topValues.minIndex] = sum
 	}
 
-	topValues.minIndex = common.FindMinIndex(topValues.values)
+	topValues.minIndex = findMinIndex(topValues.values)
 }
 
 func SolveB(lines []string) common.Solution {
@@ -52,5 +80,5 @@ func SolveB(lines []string) common.Solution {
 	}
 
 	topValues.update(currentSum)
-	return common.ToIntSolution(common.ComputeSum(topValues.values))
+	return common.ToIntSolution(computeSum(topValues.values))
 }

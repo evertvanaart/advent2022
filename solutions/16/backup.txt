@@ -1,0 +1,149 @@
+package day16
+
+import (
+	"advent2022/solutions/common"
+	"fmt"
+	"sort"
+)
+
+const maxTimeB = 26
+
+/* -------------------------------- Position -------------------------------- */
+
+type position struct {
+	label    string
+	distance int
+}
+
+/* -------------------------------- Utilities ------------------------------- */
+
+func otherIndex(index int) int {
+	if index == 0 {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+/* ---------------------------------- State --------------------------------- */
+
+type stateB struct {
+	score      int
+	timeLeft   int
+	closedFlow int
+	positions  [2]*position
+	opened     map[string]bool
+}
+
+func createStateB(totalFlow int) *stateB {
+	positions := [2]*position{{"AA", 0}, {"AA", 0}}
+	return &stateB{0, maxTimeB, totalFlow, positions, map[string]bool{}}
+}
+
+func (st *stateB) copy() *stateB {
+	opened := map[string]bool{}
+
+	for label := range st.opened {
+		opened[label] = true
+	}
+
+	positions := [2]*position{
+		{st.positions[0].label, st.positions[0].distance},
+		{st.positions[1].label, st.positions[1].distance},
+	}
+
+	return &stateB{st.score, st.timeLeft, st.closedFlow, positions, opened}
+}
+
+/* -------------------------------- Recursion ------------------------------- */
+
+func recurseFor(valves valves, st *stateB, index int) {
+	position := st.positions[index]
+	label := position.label
+
+	if position.distance > 0 {
+		return
+	}
+
+	if !st.opened[label] && valves[label].flow > 0 {
+		newState := st.copy()
+		newState.opened[label] = true
+		newState.score += valves[label].flow * (st.timeLeft - 1)
+		newState.closedFlow -= valves[label].flow
+		newState.positions[index].distance = 1
+		recurseB(valves, newState)
+	}
+
+	potentialScore := valves.potentialScore(st.timeLeft, 1, st.opened)
+	maxScore := st.score + potentialScore
+
+	if potentialScore > 0 && maxScore < bestScore {
+		return
+	}
+
+	valve := valves[label]
+	candidates := make([]*candidate, len(valve.next))
+
+	for index, neighbor := range valve.next {
+		neighborLabel := neighbor.label
+		neighborFlow := valves[neighborLabel].flow
+		otherTarget := st.positions[otherIndex(index)].label
+		isOpen := st.opened[neighborLabel]
+
+		if neighborFlow == 0 || isOpen || otherTarget == neighborLabel {
+			candidates[index] = &candidate{neighborLabel, neighbor.distance, st.score}
+		} else {
+			newScore := st.score + neighborFlow*(st.timeLeft-neighbor.distance-1)
+			candidates[index] = &candidate{neighborLabel, neighbor.distance, newScore}
+		}
+	}
+
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].score > candidates[j].score
+	})
+
+	for _, candidate := range candidates {
+		newState := st.copy()
+		newState.positions[index].label = candidate.label
+		newState.positions[index].distance = candidate.distance
+		recurseB(valves, newState)
+	}
+}
+
+func recurseB(valves valves, st *stateB) {
+	if st.timeLeft <= 0 || st.closedFlow == 0 {
+		if st.score > bestScore {
+			bestScore = st.score
+			fmt.Println(bestScore)
+		}
+
+		return
+	}
+
+	for st.positions[0].distance > 0 && st.positions[1].distance > 0 {
+		st.positions[0].distance -= 1
+		st.positions[1].distance -= 1
+		st.timeLeft -= 1
+	}
+
+	recurseFor(valves, st, 0)
+	recurseFor(valves, st, 1)
+}
+
+func SolveB(lines []string) common.Solution {
+	valves := valves{}
+
+	for _, line := range lines {
+		valve := parse(line)
+		label := valve.label
+		valves[label] = valve
+	}
+
+	valves.simplify()
+
+	totalFlow := valves.totalFlow()
+	state := createStateB(totalFlow)
+	recurseB(valves, state)
+
+	return common.ToIntSolution(bestScore)
+}
